@@ -18,6 +18,13 @@ The app bundles four lightweight tools:
 Use the dashboard as a starting point for discussions about your own production system and as a
 sandbox for future TLS experiments.
 
+### Plan the next iteration
+
+Review the [project roadmap](docs/roadmap.md) for a curated list of high-value improvements to
+implement next—covering data persistence, deeper analytics, AR prototyping support, operational
+readiness, and research activities. Update it as milestones are completed so the team stays aligned
+on what to push to the repository next.
+
 ## Getting started
 1. Install dependencies
    ```bash
