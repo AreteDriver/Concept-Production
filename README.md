@@ -2,15 +2,15 @@
 
 ## Overview
 Scaffold repository originally created for an AI-driven QA/Lean system. It now hosts a
-Streamlit-based math practice game that can be deployed locally or in the cloud.
+Streamlit-based Stardew Valley skill experience calculator that can be deployed locally or
+in the cloud.
 
-## Running the math game
+## Running the XP calculator
 
 ```bash
 pip install -r requirements.txt
 streamlit run app.py
 ```
 
-Open the URL displayed by Streamlit in your browser to start playing. Use the sidebar
-to choose the difficulty, operations, and to fetch a new challenge whenever you want a
-fresh question.
+Open the URL displayed by Streamlit in your browser to explore how different actions add
+experience to each skill and how close you are to reaching the next level.
