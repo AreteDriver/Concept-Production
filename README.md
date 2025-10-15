@@ -1,15 +1,17 @@
-# TLS Concept Production 2.0
-
 ## Overview
 This repository contains a Streamlit prototype that demonstrates how a TLS (Toyota Lean System)
-team might explore flow, waste, and improvement ideas in one place. The app bundles three
-lightweight tools:
+team might explore flow, waste, and improvement ideas in one place. The refreshed dashboard keeps a
+running history of every calculation or observation so data can be revisited during daily huddles
+or leadership reviews.
 
-- **Takt time calculator** – Align production cadence with customer demand and review capacity.
-- **Waste tracker** – Capture gemba observations for the seven classic wastes and surface the
-  biggest opportunities.
-- **Kaizen planner** – Record continuous improvement ideas, estimate effort/impact, and spot
-  quick wins.
+The app bundles three lightweight tools:
+
+- **Takt time planner** – Capture named scenarios, compare takt time versus cycle time, and review
+  historical calculations on an interactive chart.
+- **Waste observation log** – Record detailed gemba notes (area, shift, counts) and instantly see
+  aggregated charts with the latest entries.
+- **Kaizen planner** – Build an improvement backlog with due dates, status tracking, and leverage
+  scoring cues to highlight quick wins.
 
 Use the dashboard as a starting point for discussions about your own production system and as a
 sandbox for future TLS experiments.

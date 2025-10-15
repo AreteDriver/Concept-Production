@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
+from datetime import date, datetime
 from typing import List
 
 import pandas as pd
@@ -31,8 +32,14 @@ WASTES: List[WasteCategory] = [
 def init_session_state() -> None:
     """Ensure session state keys are present."""
 
-    if "improvement_ideas" not in st.session_state:
-        st.session_state["improvement_ideas"] = []
+    defaults = {
+        "improvement_ideas": [],
+        "takt_history": [],
+        "waste_log": [],
+    }
+    for key, value in defaults.items():
+        if key not in st.session_state:
+            st.session_state[key] = value
 
 
 def render_overview() -> None:
@@ -61,93 +68,187 @@ def render_overview() -> None:
         "supports flow, quality, and stability."
     )
 
+    st.caption(
+        "The modules below are structured to capture data over time. Each calculation or observation "
+        "is stored so teams can revisit trends during tiered meetings or kata coaching sessions."
+    )
+
 
 def render_takt_time_calculator() -> None:
     """Provide takt time and capacity planning guidance."""
 
-    st.header("Takt Time Calculator")
+    st.header("Takt Time Planner")
     st.write(
-        "Takt time aligns production pace with customer demand. Compare it to your "
-        "current cycle time to understand whether you are meeting expectations."
+        "Capture different production scenarios to understand how demand, shift coverage, and cycle "
+        "time impact flow. The tracker preserves each calculation for quick comparison during stand-up "
+        "conversations."
     )
 
-    with st.form("takt_form"):
-        available_minutes = st.number_input(
-            "Available production time per shift (minutes)",
-            min_value=60,
-            max_value=1_200,
-            value=420,
-            step=15,
-        )
-        shifts = st.number_input("Number of shifts per day", min_value=1, max_value=4, value=1)
-        demand = st.number_input("Customer demand per day (units)", min_value=1, value=200)
-        cycle_time = st.number_input(
-            "Current average cycle time (minutes per unit)", min_value=0.1, value=2.5
-        )
-        submitted = st.form_submit_button("Calculate")
+    left, right = st.columns((1, 1))
+    with left:
+        with st.form("takt_form"):
+            scenario = st.text_input(
+                "Scenario name",
+                help="Label the calculation (e.g. 'Baseline', 'Peak season', 'Future state').",
+            )
+            available_minutes = st.number_input(
+                "Available production time per shift (minutes)",
+                min_value=60,
+                max_value=1_200,
+                value=420,
+                step=15,
+            )
+            shifts = st.number_input(
+                "Number of shifts per day", min_value=1, max_value=4, value=1
+            )
+            demand = st.number_input(
+                "Customer demand per day (units)", min_value=1, value=200
+            )
+            cycle_time = st.number_input(
+                "Current average cycle time (minutes per unit)",
+                min_value=0.1,
+                value=2.5,
+            )
+            submitted = st.form_submit_button("Record scenario")
 
-    if not submitted:
+    if submitted:
+        total_available_time = available_minutes * shifts
+        takt_time = total_available_time / demand
+        capacity = total_available_time / cycle_time
+        st.session_state["takt_history"].append(
+            {
+                "Scenario": scenario.strip() or f"Scenario {len(st.session_state['takt_history']) + 1}",
+                "Recorded": datetime.now().strftime("%Y-%m-%d %H:%M"),
+                "Available minutes": total_available_time,
+                "Shifts": shifts,
+                "Demand": demand,
+                "Cycle time": cycle_time,
+                "Takt time": takt_time,
+                "Daily capacity": capacity,
+                "Capacity vs demand": capacity - demand,
+            }
+        )
+
+    if not st.session_state["takt_history"]:
+        right.info("Log a scenario to reveal the takt analytics workspace.")
         return
 
-    total_available_time = available_minutes * shifts
-    takt_time = total_available_time / demand
-    capacity = total_available_time / cycle_time
+    latest = st.session_state["takt_history"][-1]
+    total_available_time = latest["Available minutes"]
+    takt_time = latest["Takt time"]
+    cycle_time = latest["Cycle time"]
+    capacity = latest["Daily capacity"]
 
-    col1, col2, col3 = st.columns(3)
-    col1.metric("Total available time", f"{total_available_time:.0f} min/day")
-    col2.metric("Takt time", f"{takt_time:.2f} min/unit")
-    col3.metric("Daily capacity", f"{capacity:.1f} units")
+    with right:
+        st.subheader(f"{latest['Scenario']} snapshot")
+        col1, col2, col3 = st.columns(3)
+        col1.metric("Available time", f"{total_available_time:.0f} min/day")
+        col2.metric("Takt time", f"{takt_time:.2f} min/unit")
+        col3.metric("Daily capacity", f"{capacity:.1f} units")
 
-    if cycle_time <= takt_time:
-        st.success(
-            "Your cycle time is aligned with demand. Focus on stability and problem "
-            "prevention to preserve this balance."
-        )
-    else:
-        st.warning(
-            "Cycle time exceeds takt time — investigate bottlenecks, load balance "
-            "work, and consider kaizen events to reduce waste."
-        )
+        if cycle_time <= takt_time:
+            st.success(
+                "Cycle time is within takt — prioritise sustaining routines and error proofing."
+            )
+        else:
+            st.warning(
+                "Cycle time exceeds takt. Balance workloads, remove delays, or evaluate extra shifts."
+            )
+
+    history_df = pd.DataFrame(st.session_state["takt_history"])
+    st.subheader("Scenario history")
+    st.dataframe(history_df, use_container_width=True)
+
+    chart_df = history_df.set_index("Scenario")["Takt time"]
+    st.line_chart(chart_df)
 
     st.caption(
-        "Tip: Try experimenting with different demand or shift scenarios to stress test "
-        "your production plan."
+        "Tip: Share the scenario history during tiered meetings so each team understands how changes "
+        "in demand or shift coverage ripple through capacity."
     )
 
 
 def render_waste_tracker() -> None:
     """Collect a snapshot of the seven wastes and highlight priorities."""
 
-    st.header("Waste Observation Tracker")
+    st.header("Waste Observation Log")
     st.write(
-        "Log the number of waste observations from recent gemba walks. The chart "
-        "will highlight where the largest opportunities exist."
+        "Capture individual observations to build a time-based view of waste patterns. Filter the log "
+        "to uncover hotspots by area, team, or shift."
     )
 
-    entries = {}
-    for waste in WASTES:
-        entries[waste.name] = st.number_input(
-            f"{waste.name} observations", min_value=0, step=1, value=0, help=waste.description
+    with st.expander("Quick reference: 7 wastes"):
+        for waste in WASTES:
+            st.markdown(f"**{waste.name}** — {waste.description}")
+
+    with st.form("waste_form"):
+        col1, col2 = st.columns(2)
+        with col1:
+            category = st.selectbox("Waste category", [w.name for w in WASTES])
+            count = st.number_input("Occurrences", min_value=1, value=1)
+            observed_on = st.date_input(
+                "Observation date",
+                value=date.today(),
+                max_value=date.today(),
+            )
+        with col2:
+            area = st.text_input(
+                "Process / area", help="e.g. Paint line, Shipping, Assembly cell 3"
+            )
+            shift = st.selectbox("Shift", ["Day", "Swing", "Night", "Mixed"])
+            note = st.text_area(
+                "Notes", help="Add context such as suspected root cause or defect count."
+            )
+
+        submitted = st.form_submit_button("Add observation")
+
+    if submitted:
+        st.session_state["waste_log"].append(
+            {
+                "Recorded": observed_on.strftime("%Y-%m-%d"),
+                "Waste": category,
+                "Occurrences": count,
+                "Area": area.strip() or "Unspecified",
+                "Shift": shift,
+                "Notes": note.strip(),
+            }
+        )
+        st.success(
+            "Observation captured. Continue logging during gemba walks to build trends."
         )
 
-    total = sum(entries.values())
-    df = pd.DataFrame({"Waste": list(entries.keys()), "Observations": list(entries.values())})
-
-    st.bar_chart(df.set_index("Waste"))
-
-    if total == 0:
-        st.caption("Record at least one observation to surface priorities.")
+    if not st.session_state["waste_log"]:
+        st.caption("Log your first observation to unlock dashboards and analytics.")
         return
 
-    top_waste = max(entries, key=entries.get)
+    log_df = pd.DataFrame(st.session_state["waste_log"])
+
+    summary = (
+        log_df.groupby("Waste", as_index=False)["Occurrences"].sum().sort_values(
+            "Occurrences", ascending=False
+        )
+    )
+
+    col_chart, col_table = st.columns((2, 1))
+    with col_chart:
+        st.subheader("Occurrences by waste")
+        st.bar_chart(summary.set_index("Waste"))
+    with col_table:
+        st.subheader("Latest entries")
+        st.dataframe(
+            log_df.sort_values(["Recorded", "Occurrences"], ascending=[False, False]).head(8),
+            use_container_width=True,
+        )
+
+    top_waste = summary.iloc[0]
     st.info(
-        f"Great data capture! **{top_waste}** currently has the highest count. "
-        "Plan a root cause workshop and experiment backlog focused on this waste."
+        f"{top_waste['Waste']} is currently the largest source of waste with "
+        f"{top_waste['Occurrences']} occurrences logged. Facilitate a root cause session and align "
+        "kaizen ideas accordingly."
     )
 
     st.caption(
-        "Remember to celebrate improvements and continue collecting data to verify "
-        "that countermeasures are working."
+        "Export the table from the context menu to share with leadership or to support PDCA reviews."
     )
 
 
@@ -156,8 +257,8 @@ def render_kaizen_planner() -> None:
 
     st.header("Continuous Improvement Planner")
     st.write(
-        "Capture kaizen ideas, estimate impact and effort, and organise the backlog. "
-        "Use the prioritisation cues to select quick wins versus larger strategic bets."
+        "Capture kaizen ideas, estimate impact and effort, and organise the backlog. Use the "
+        "prioritisation cues to select quick wins versus larger strategic bets."
     )
 
     with st.form("kaizen_form"):
@@ -165,7 +266,11 @@ def render_kaizen_planner() -> None:
         goal = st.text_area("Problem / goal statement")
         effort = st.slider("Effort", min_value=1, max_value=5, value=3)
         impact = st.slider("Impact", min_value=1, max_value=5, value=3)
-        owner = st.text_input("Owner", help="Person accountable for shepherding the experiment.")
+        owner = st.text_input(
+            "Owner", help="Person accountable for shepherding the experiment."
+        )
+        due = st.date_input("Target completion", value=date.today())
+        status = st.selectbox("Status", ["To review", "In progress", "Complete"])
         submitted = st.form_submit_button("Add idea")
 
     if submitted and title.strip():
@@ -176,6 +281,8 @@ def render_kaizen_planner() -> None:
                 "Impact": impact,
                 "Effort": effort,
                 "Leverage score": impact - effort,
+                "Due": due.strftime("%Y-%m-%d"),
+                "Status": status,
                 "Statement": goal.strip() or "",
             }
         )
@@ -187,7 +294,10 @@ def render_kaizen_planner() -> None:
 
     ideas_df = pd.DataFrame(st.session_state["improvement_ideas"])
     st.subheader("Kaizen backlog")
-    st.dataframe(ideas_df, use_container_width=True)
+    st.dataframe(
+        ideas_df.sort_values(["Status", "Leverage score"], ascending=[True, False]),
+        use_container_width=True,
+    )
 
     quick_wins = ideas_df[(ideas_df["Impact"] >= 4) & (ideas_df["Effort"] <= 2)]
     if not quick_wins.empty:
