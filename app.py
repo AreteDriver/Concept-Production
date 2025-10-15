@@ -11,21 +11,24 @@ import streamlit as st
 
 
 @dataclass(frozen=True)
-class WasteCategory:
-    """Represents one of the classic lean wastes."""
+class TLSWasteCategory:
+    """Represents a TLS waste focus area used across the facility."""
 
     name: str
     description: str
 
 
-WASTES: List[WasteCategory] = [
-    WasteCategory("Transportation", "Unnecessary movement of materials or products."),
-    WasteCategory("Inventory", "Excess stock that ties up cash and space."),
-    WasteCategory("Motion", "Unnecessary employee movement."),
-    WasteCategory("Waiting", "Idle time caused by imbalanced processes."),
-    WasteCategory("Overproduction", "Making more than is needed or too early."),
-    WasteCategory("Overprocessing", "Doing more work or using more components than required."),
-    WasteCategory("Defects", "Rework or scrap due to quality issues."),
+TLS_WASTES: List[TLSWasteCategory] = [
+    TLSWasteCategory("Transportation", "Unnecessary movement of materials or products."),
+    TLSWasteCategory("Inventory", "Excess stock that ties up cash and space."),
+    TLSWasteCategory("Motion", "Unnecessary associate movement."),
+    TLSWasteCategory("Waiting", "Idle time caused by imbalanced processes."),
+    TLSWasteCategory("Overproduction", "Making more than is needed or too early."),
+    TLSWasteCategory(
+        "Overprocessing",
+        "Doing more work or using more components than required for the TLS build list.",
+    ),
+    TLSWasteCategory("Defects", "Rework or scrap due to quality issues."),
 ]
 
 
@@ -55,7 +58,7 @@ def render_overview() -> None:
 
     st.markdown(
         """
-        ### Guiding principles
+        ### TLS guiding principles
         * **Customer first** – Align production cadence with real demand.
         * **Eliminate waste** – Continuously surface and remove activities that do not add value.
         * **Respect for people** – Empower frontline teams to expose problems and solve them.
@@ -229,14 +232,14 @@ def render_waste_tracker() -> None:
         "to uncover hotspots by area, team, or shift."
     )
 
-    with st.expander("Quick reference: 7 wastes"):
-        for waste in WASTES:
+    with st.expander("Quick reference: TLS waste focus areas"):
+        for waste in TLS_WASTES:
             st.markdown(f"**{waste.name}** — {waste.description}")
 
     with st.form("waste_form"):
         col1, col2 = st.columns(2)
         with col1:
-            category = st.selectbox("Waste category", [w.name for w in WASTES])
+            category = st.selectbox("Waste category", [w.name for w in TLS_WASTES])
             count = st.number_input("Occurrences", min_value=1, value=1)
             observed_on = st.date_input(
                 "Observation date",
