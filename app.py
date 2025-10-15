@@ -1,190 +1,227 @@
-"""Streamlit app for calculating Stardew Valley skill experience."""
+"""Streamlit app illustrating a TLS (Toyota Lean System) production concept."""
 
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import Dict, List
+from typing import List
 
+import pandas as pd
 import streamlit as st
 
 
 @dataclass(frozen=True)
-class SkillAction:
-    """Representation of an activity that grants experience."""
+class WasteCategory:
+    """Represents one of the classic Toyota Lean System wastes."""
 
-    label: str
-    xp: int
-    description: str | None = None
+    name: str
+    description: str
 
 
-# Cumulative XP required to reach each level (level 0 -> 10)
-LEVEL_XP_REQUIREMENTS: List[int] = [
-    0,
-    100,
-    380,
-    770,
-    1_300,
-    2_150,
-    3_300,
-    4_800,
-    6_900,
-    10_000,
-    15_000,
+WASTES: List[WasteCategory] = [
+    WasteCategory("Transportation", "Unnecessary movement of materials or products."),
+    WasteCategory("Inventory", "Excess stock that ties up cash and space."),
+    WasteCategory("Motion", "Unnecessary employee movement."),
+    WasteCategory("Waiting", "Idle time caused by imbalanced processes."),
+    WasteCategory("Overproduction", "Making more than is needed or too early."),
+    WasteCategory("Overprocessing", "Doing more work or using more components than required."),
+    WasteCategory("Defects", "Rework or scrap due to quality issues."),
 ]
 
 
-SKILL_ACTIONS: Dict[str, List[SkillAction]] = {
-    "Farming": [
-        SkillAction("Harvest regular crop", 8, "Parsnip, Potatoes, etc."),
-        SkillAction("Harvest quality crop", 16, "Silver/Gold/Iridium crops"),
-        SkillAction("Milking / Shearing", 5),
-        SkillAction("Petting animals", 5),
-    ],
-    "Mining": [
-        SkillAction("Break stone node", 1),
-        SkillAction("Break ore node", 5),
-        SkillAction("Break gem node", 12),
-        SkillAction("Slay cave monster", 3, "Dust Sprites, Slimes, etc."),
-    ],
-    "Foraging": [
-        SkillAction("Gather forage item", 7),
-        SkillAction("Chop tree", 12, "Full tree (no seeds)"),
-        SkillAction("Chop stump/log", 25),
-        SkillAction("Tapper collection", 8, "Syrup, resin, etc."),
-    ],
-    "Fishing": [
-        SkillAction("Catch fish", 3),
-        SkillAction("Perfect catch bonus", 15, "In addition to catch XP"),
-        SkillAction("Collect crab pot", 5),
-        SkillAction("Fish treasure chest", 5),
-    ],
-    "Combat": [
-        SkillAction("Slay monster", 4, "Typical overworld enemy"),
-        SkillAction("Slay boss/strong monster", 15),
-        SkillAction("Use explosive", 1, "Bomb damage"),
-        SkillAction("Reach deeper floor", 25, "First-time floor completion"),
-    ],
+def init_session_state() -> None:
+    """Ensure session state keys are present."""
+
+    if "improvement_ideas" not in st.session_state:
+        st.session_state["improvement_ideas"] = []
+
+
+def render_overview() -> None:
+    """Display background information about the TLS concept."""
+
+    st.title("TLS Concept Production 2.0")
+    st.subheader("Toyota Lean System roadmap for continuous improvement")
+    st.write(
+        "This dashboard captures core concepts from the Toyota Lean System (TLS) and "
+        "helps teams quickly explore their production health. Use it to calculate takt "
+        "time, visualise waste hotspots, and prioritise improvement experiments."
+    )
+
+    st.markdown(
+        """
+        ### Guiding principles
+        * **Customer first** – Align production cadence with real demand.
+        * **Eliminate waste** – Continuously surface and remove activities that do not add value.
+        * **Respect for people** – Empower frontline teams to expose problems and solve them.
+        * **Continuous improvement (Kaizen)** – Experiment, learn, and standardise the best practices.
+        """
+    )
+
+    st.info(
+        "Switch between the calculators in the sidebar to explore how each TLS element "
+        "supports flow, quality, and stability."
+    )
+
+
+def render_takt_time_calculator() -> None:
+    """Provide takt time and capacity planning guidance."""
+
+    st.header("Takt Time Calculator")
+    st.write(
+        "Takt time aligns production pace with customer demand. Compare it to your "
+        "current cycle time to understand whether you are meeting expectations."
+    )
+
+    with st.form("takt_form"):
+        available_minutes = st.number_input(
+            "Available production time per shift (minutes)",
+            min_value=60,
+            max_value=1_200,
+            value=420,
+            step=15,
+        )
+        shifts = st.number_input("Number of shifts per day", min_value=1, max_value=4, value=1)
+        demand = st.number_input("Customer demand per day (units)", min_value=1, value=200)
+        cycle_time = st.number_input(
+            "Current average cycle time (minutes per unit)", min_value=0.1, value=2.5
+        )
+        submitted = st.form_submit_button("Calculate")
+
+    if not submitted:
+        return
+
+    total_available_time = available_minutes * shifts
+    takt_time = total_available_time / demand
+    capacity = total_available_time / cycle_time
+
+    col1, col2, col3 = st.columns(3)
+    col1.metric("Total available time", f"{total_available_time:.0f} min/day")
+    col2.metric("Takt time", f"{takt_time:.2f} min/unit")
+    col3.metric("Daily capacity", f"{capacity:.1f} units")
+
+    if cycle_time <= takt_time:
+        st.success(
+            "Your cycle time is aligned with demand. Focus on stability and problem "
+            "prevention to preserve this balance."
+        )
+    else:
+        st.warning(
+            "Cycle time exceeds takt time — investigate bottlenecks, load balance "
+            "work, and consider kaizen events to reduce waste."
+        )
+
+    st.caption(
+        "Tip: Try experimenting with different demand or shift scenarios to stress test "
+        "your production plan."
+    )
+
+
+def render_waste_tracker() -> None:
+    """Collect a snapshot of the seven wastes and highlight priorities."""
+
+    st.header("Waste Observation Tracker")
+    st.write(
+        "Log the number of waste observations from recent gemba walks. The chart "
+        "will highlight where the largest opportunities exist."
+    )
+
+    entries = {}
+    for waste in WASTES:
+        entries[waste.name] = st.number_input(
+            f"{waste.name} observations", min_value=0, step=1, value=0, help=waste.description
+        )
+
+    total = sum(entries.values())
+    df = pd.DataFrame({"Waste": list(entries.keys()), "Observations": list(entries.values())})
+
+    st.bar_chart(df.set_index("Waste"))
+
+    if total == 0:
+        st.caption("Record at least one observation to surface priorities.")
+        return
+
+    top_waste = max(entries, key=entries.get)
+    st.info(
+        f"Great data capture! **{top_waste}** currently has the highest count. "
+        "Plan a root cause workshop and experiment backlog focused on this waste."
+    )
+
+    st.caption(
+        "Remember to celebrate improvements and continue collecting data to verify "
+        "that countermeasures are working."
+    )
+
+
+def render_kaizen_planner() -> None:
+    """Simple impact vs. effort planner for kaizen experiments."""
+
+    st.header("Continuous Improvement Planner")
+    st.write(
+        "Capture kaizen ideas, estimate impact and effort, and organise the backlog. "
+        "Use the prioritisation cues to select quick wins versus larger strategic bets."
+    )
+
+    with st.form("kaizen_form"):
+        title = st.text_input("Idea title")
+        goal = st.text_area("Problem / goal statement")
+        effort = st.slider("Effort", min_value=1, max_value=5, value=3)
+        impact = st.slider("Impact", min_value=1, max_value=5, value=3)
+        owner = st.text_input("Owner", help="Person accountable for shepherding the experiment.")
+        submitted = st.form_submit_button("Add idea")
+
+    if submitted and title.strip():
+        st.session_state["improvement_ideas"].append(
+            {
+                "Idea": title.strip(),
+                "Owner": owner.strip() or "Unassigned",
+                "Impact": impact,
+                "Effort": effort,
+                "Leverage score": impact - effort,
+                "Statement": goal.strip() or "",
+            }
+        )
+        st.success("Idea added to the backlog. Continue capturing insights!")
+
+    if not st.session_state["improvement_ideas"]:
+        st.caption("Add your first idea to see the prioritisation table.")
+        return
+
+    ideas_df = pd.DataFrame(st.session_state["improvement_ideas"])
+    st.subheader("Kaizen backlog")
+    st.dataframe(ideas_df, use_container_width=True)
+
+    quick_wins = ideas_df[(ideas_df["Impact"] >= 4) & (ideas_df["Effort"] <= 2)]
+    if not quick_wins.empty:
+        st.success(
+            "Quick wins detected! Focus on these ideas first to build momentum: "
+            + ", ".join(quick_wins["Idea"].tolist())
+        )
+
+    stretch = ideas_df[(ideas_df["Impact"] >= 4) & (ideas_df["Effort"] >= 4)]
+    if not stretch.empty:
+        st.warning(
+            "High-impact but heavy lifts spotted. Plan cross-functional support for: "
+            + ", ".join(stretch["Idea"].tolist())
+        )
+
+
+PAGE_RENDERERS = {
+    "Overview": render_overview,
+    "Takt time": render_takt_time_calculator,
+    "Waste tracker": render_waste_tracker,
+    "Kaizen planner": render_kaizen_planner,
 }
 
 
-def determine_level(total_xp: int) -> int:
-    """Return the current level (0-10) for the provided cumulative XP."""
-
-    for level, requirement in reversed(list(enumerate(LEVEL_XP_REQUIREMENTS))):
-        if total_xp >= requirement:
-            return level
-    return 0
-
-
-def xp_to_next_level(total_xp: int) -> int | None:
-    """Calculate XP needed to reach the next level, or None if at level cap."""
-
-    current_level = determine_level(total_xp)
-    if current_level >= 10:
-        return None
-    next_requirement = LEVEL_XP_REQUIREMENTS[current_level + 1]
-    return max(0, next_requirement - total_xp)
-
-
-def render_sidebar(skill: str) -> tuple[int, Dict[str, int]]:
-    """Render sidebar inputs and return current XP plus action counts."""
-
-    st.sidebar.header("Skill & Progress")
-    st.sidebar.write(
-        "Enter your current experience and how many actions you plan to take."
-    )
-    current_xp = st.sidebar.number_input(
-        "Current XP", min_value=0, max_value=LEVEL_XP_REQUIREMENTS[-1], value=0
-    )
-
-    st.sidebar.header("Actions")
-    counts: Dict[str, int] = {}
-    for action in SKILL_ACTIONS[skill]:
-        counts[action.label] = st.sidebar.number_input(
-            action.label,
-            min_value=0,
-            step=1,
-            value=0,
-            key=f"{skill}-{action.label}",
-        )
-    return current_xp, counts
-
-
-def render_skill_selector() -> str:
-    """Display the skill selector and return the selected skill."""
-
-    st.sidebar.title("Stardew XP Calculator")
-    skill = st.sidebar.selectbox("Skill", list(SKILL_ACTIONS.keys()))
-    return skill
-
-
-def calculate_total_gain(skill: str, counts: Dict[str, int]) -> int:
-    """Compute the total XP gained for the selected skill."""
-
-    actions = {action.label: action for action in SKILL_ACTIONS[skill]}
-    return sum(actions[label].xp * quantity for label, quantity in counts.items())
-
-
-def render_results(skill: str, gained_xp: int, current_xp: int, counts: Dict[str, int]) -> None:
-    """Render metrics summarizing the player's progress."""
-
-    new_total = current_xp + gained_xp
-    current_level = determine_level(current_xp)
-    new_level = determine_level(new_total)
-    to_next_now = xp_to_next_level(current_xp)
-    to_next_after = xp_to_next_level(new_total)
-
-    st.header(f"{skill} Progress Overview")
-    st.write(
-        "Use this calculator to estimate how your planned actions will move you toward "
-        "the next skill level. XP values reflect standard Stardew Valley mechanics." 
-    )
-
-    col1, col2, col3 = st.columns(3)
-    col1.metric("Current Level", current_level)
-    col2.metric("XP Gained", gained_xp)
-    col3.metric("New Level", new_level)
-
-    st.progress(min(new_total / LEVEL_XP_REQUIREMENTS[-1], 1.0))
-
-    if to_next_now is None:
-        st.success("You've already reached level 10! 🎉")
-    else:
-        st.info(
-            f"Current XP to next level: {to_next_now}"
-            + (
-                f" — after actions you'll need {to_next_after} more XP."
-                if to_next_after is not None
-                else " — these actions will cap the skill!"
-            )
-        )
-
-    if gained_xp:
-        st.subheader("XP Breakdown")
-        for action in SKILL_ACTIONS[skill]:
-            quantity = counts.get(action.label, 0)
-            if quantity:
-                total = quantity * action.xp
-                description = f" ({action.description})" if action.description else ""
-                st.write(f"• **{action.label}** × {quantity} → {total} XP{description}")
-    else:
-        st.caption("Select action counts in the sidebar to see projected gains.")
-
-    st.subheader("Level Requirements")
-    st.table(
-        {
-            "Level": list(range(1, 11)),
-            "Total XP": LEVEL_XP_REQUIREMENTS[1:],
-        }
-    )
-
-
 def main() -> None:
-    st.set_page_config(page_title="Stardew Valley XP Calculator", layout="wide")
-    skill = render_skill_selector()
-    current_xp, counts = render_sidebar(skill)
-    gained_xp = calculate_total_gain(skill, counts)
-    render_results(skill, gained_xp, current_xp, counts)
+    """Application entry point."""
+
+    st.set_page_config(page_title="TLS Concept Production 2.0", layout="wide")
+    init_session_state()
+
+    st.sidebar.title("TLS navigation")
+    selection = st.sidebar.radio("Select module", list(PAGE_RENDERERS.keys()))
+
+    PAGE_RENDERERS[selection]()
 
 
 if __name__ == "__main__":

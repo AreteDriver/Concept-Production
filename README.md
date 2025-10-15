@@ -1,16 +1,30 @@
-# TLS Concept QA/Lean system
+# TLS Concept Production 2.0
 
 ## Overview
-Scaffold repository originally created for an AI-driven QA/Lean system. It now hosts a
-Streamlit-based Stardew Valley skill experience calculator that can be deployed locally or
-in the cloud.
+This repository contains a Streamlit prototype that demonstrates how a TLS (Toyota Lean System)
+team might explore flow, waste, and improvement ideas in one place. The app bundles three
+lightweight tools:
 
-## Running the XP calculator
+- **Takt time calculator** – Align production cadence with customer demand and review capacity.
+- **Waste tracker** – Capture gemba observations for the seven classic wastes and surface the
+  biggest opportunities.
+- **Kaizen planner** – Record continuous improvement ideas, estimate effort/impact, and spot
+  quick wins.
 
-```bash
-pip install -r requirements.txt
-streamlit run app.py
-```
+Use the dashboard as a starting point for discussions about your own production system and as a
+sandbox for future TLS experiments.
 
-Open the URL displayed by Streamlit in your browser to explore how different actions add
-experience to each skill and how close you are to reaching the next level.
+## Getting started
+1. Install dependencies
+   ```bash
+   pip install -r requirements.txt
+   ```
+2. Launch the Streamlit dashboard
+   ```bash
+   streamlit run app.py
+   ```
+3. Open the URL printed in the terminal (typically http://localhost:8501) to explore the TLS
+   concept modules.
+
+Feel free to fork this repository and adapt the calculators, data models, or styling to suit your
+team's workflows.
