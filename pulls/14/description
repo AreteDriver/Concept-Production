@@ -1,0 +1,22 @@
+## Overview
+
+This PR configures GitHub Copilot instructions for the TLS-Concept-production-2.0 repository according to best practices. The instructions provide focused context to help Copilot generate repository-relevant suggestions.
+
+## Changes
+
+- Created `.github/copilot-instructions.md` with repository-specific guidance for development setup, coding conventions, OpenAI integration patterns, and Streamlit best practices.
+- Updated `.gitignore` to exclude common virtualenv and editor temporary files.
+- Removed an accidentally committed editor swap file.
+
+## Benefits
+
+- Improves Copilot suggestions for this project
+- Keeps documentation focused on the TLS concept and Toyota Production System
+- Reduces noise from unrelated example/template content
+
+## Testing
+
+- Verified Python syntax for the repository entrypoint (docs-only change)
+- No functional code modified
+
+Resolves: #13
