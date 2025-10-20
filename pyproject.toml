@@ -1,0 +1,81 @@
+[build-system]
+requires = ["setuptools>=68.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "tls-concept-production"
+version = "2.0.0"
+description = "AI-driven QA/Lean system for Toyota Production System"
+readme = "README.md"
+requires-python = ">=3.12"
+license = {text = "MIT"}
+authors = [
+    {name = "AreteDriver"},
+]
+keywords = ["toyota", "production", "lean", "ai", "qa", "streamlit"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Manufacturing",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.12",
+]
+
+dependencies = [
+    "streamlit",
+    "pandas",
+    "protobuf<5",
+    "ortools",
+    "openai",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0.0",
+    "pytest-cov>=4.1.0",
+    "black>=24.0.0",
+    "isort>=5.13.0",
+    "pylint>=3.0.0",
+    "flake8>=7.0.0",
+    "mypy>=1.8.0",
+]
+
+[project.urls]
+Homepage = "https://github.com/AreteDriver/TLS-Concept-production-2.0"
+Repository = "https://github.com/AreteDriver/TLS-Concept-production-2.0"
+Issues = "https://github.com/AreteDriver/TLS-Concept-production-2.0/issues"
+
+[tool.black]
+line-length = 88
+target-version = ['py312']
+include = '\.pyi?$'
+
+[tool.isort]
+profile = "black"
+line_length = 88
+multi_line_output = 3
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+python_classes = ["Test*"]
+python_functions = ["test_*"]
+addopts = [
+    "--verbose",
+    "--cov=.",
+    "--cov-report=html",
+    "--cov-report=term-missing",
+]
+
+[tool.pylint.messages_control]
+max-line-length = 88
+disable = [
+    "C0114",  # missing-module-docstring
+    "C0116",  # missing-function-docstring
+]
+
+[tool.mypy]
+python_version = "3.12"
+warn_return_any = true
+warn_unused_configs = true
+disallow_untyped_defs = false
