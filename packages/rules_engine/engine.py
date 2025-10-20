@@ -110,7 +110,11 @@ class RulesEngine:
         elif operator == 'in':
             return actual_value in expected_value
         elif operator == 'not_in':
-            return actual_value not in expected_value
+            # Check if expected_value is not in actual_value (e.g., cert not in list of certs)
+            if isinstance(actual_value, list):
+                return expected_value not in actual_value
+            else:
+                return actual_value not in expected_value
         elif operator == 'contains':
             return expected_value in actual_value
         else:
