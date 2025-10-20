@@ -1,0 +1,135 @@
+version: v1
+name: Vehicle Access Control Policy
+description: Controls when vehicles can be started, unlocked, or driven based on SOP completion and QA status
+
+rules:
+  - id: grant-start-after-qa
+    description: Grant start access after install and QA are complete
+    priority: 100
+    conditions:
+      all:
+        - field: vehicle.status
+          operator: "=="
+          value: install_done
+        - field: qa.status
+          operator: "=="
+          value: green
+        - field: defects.open.count
+          operator: "=="
+          value: 0
+    actions:
+      - type: grant
+        scope: start
+        ttl_seconds: 1800
+        reason: "Install+QA green, no open defects"
+
+  - id: grant-unlock-after-start-approval
+    description: Grant unlock after start is approved
+    priority: 90
+    conditions:
+      all:
+        - field: access.start.granted
+          operator: "=="
+          value: true
+        - field: vehicle.status
+          operator: "in"
+          value: [install_done, yard]
+    actions:
+      - type: grant
+        scope: unlock
+        ttl_seconds: 3600
+        reason: "Start access granted, vehicle ready for yard movement"
+
+  - id: block-drive-on-defects
+    description: Block drive access when open defects exist
+    priority: 200
+    conditions:
+      any:
+        - field: defects.open.count
+          operator: ">"
+          value: 0
+        - field: defects.critical.count
+          operator: ">"
+          value: 0
+    actions:
+      - type: deny
+        scope: drive
+        message: "Open defects present - resolve before driving"
+
+  - id: block-access-during-install
+    description: Block all access during active installation
+    priority: 250
+    conditions:
+      all:
+        - field: vehicle.status
+          operator: "=="
+          value: install
+        - field: sop.completed_steps_percent
+          operator: "<"
+          value: 100
+    actions:
+      - type: deny
+        scope: start
+        message: "Installation in progress - complete all steps first"
+      - type: deny
+        scope: unlock
+        message: "Installation in progress"
+      - type: deny
+        scope: drive
+        message: "Installation in progress"
+
+  - id: grant-drive-for-shipping
+    description: Grant drive access for vehicles ready to ship
+    priority: 80
+    conditions:
+      all:
+        - field: vehicle.status
+          operator: "=="
+          value: yard
+        - field: qa.final_approval
+          operator: "=="
+          value: true
+        - field: shipping.authorized
+          operator: "=="
+          value: true
+    actions:
+      - type: grant
+        scope: drive
+        ttl_seconds: 7200
+        reason: "Final QA approved, authorized for shipping"
+
+  - id: require-certification-for-qa
+    description: Require QA certification for QA operations
+    priority: 150
+    conditions:
+      all:
+        - field: operation.type
+          operator: "=="
+          value: qa_walkaround
+        - field: user.certifications
+          operator: not_in
+          value: qa_certified
+    actions:
+      - type: deny
+        message: "QA certification required for this operation"
+
+  - id: hot-unit-priority-access
+    description: Expedited access for customer priority (hot) units
+    priority: 300
+    conditions:
+      all:
+        - field: vehicle.customer_priority
+          operator: "=="
+          value: true
+        - field: qa.status
+          operator: "=="
+          value: green
+    actions:
+      - type: grant
+        scope: start
+        ttl_seconds: 900
+        reason: "Hot unit - expedited processing"
+      - type: grant
+        scope: unlock
+        ttl_seconds: 900
+        reason: "Hot unit - expedited processing"

@@ -1,0 +1,33 @@
+id: apply-window-decal
+type: install
+description: "Apply window decal with proper alignment and adhesion"
+sequence_order: 5
+requires:
+  tools:
+    - squeegee
+    - spray_bottle
+  parts:
+    - window_decal_123
+inputs:
+  photo_required: true
+  cv_required: true
+  cv_template: decals/window_template.png
+  pre_check:
+    - Clean window surface
+    - Verify decal orientation
+    - Prepare application solution
+outputs:
+  record:
+    - operator_id
+    - timestamp
+    - photo_uri
+    - cv_verification_result
+pass_criteria:
+  torque: null
+  cv:
+    iou_threshold: 0.85
+    skew_deg_max: 2.0
+  visual:
+    - No bubbles present
+    - Edges fully adhered
+    - Alignment within tolerance

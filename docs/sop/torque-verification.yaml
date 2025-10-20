@@ -1,0 +1,32 @@
+id: torque-lug-nuts
+type: verify
+description: "Verify torque on wheel lug nuts to specification"
+sequence_order: 10
+requires:
+  tools:
+    - torque_wrench_digital
+    - socket_21mm
+  parts: []
+  certifications:
+    - torque_certified
+inputs:
+  photo_required: false
+  cv_required: false
+  torque_required: true
+  torque_spec_nm: 140.0
+  torque_tolerance_percent: 5.0
+outputs:
+  record:
+    - operator_id
+    - timestamp
+    - torque_readings
+    - device_id
+    - pass_fail
+pass_criteria:
+  torque:
+    min_nm: 133.0
+    max_nm: 147.0
+  requirements:
+    - All 5 lug nuts within spec
+    - Sequential star pattern verification
+    - Final check after vehicle lowered
