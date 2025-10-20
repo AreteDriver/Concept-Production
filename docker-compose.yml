@@ -1,0 +1,55 @@
+version: '3.8'
+
+services:
+  orchestrator-api:
+    build:
+      context: .
+      dockerfile: apps/orchestrator-api/Dockerfile
+    ports:
+      - "8000:8000"
+    environment:
+      - ENVIRONMENT=development
+      - LOG_LEVEL=info
+    volumes:
+      - ./packages:/app/packages
+      - ./docs:/app/docs
+    networks:
+      - tls-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/"]
+      interval: 30s
+      timeout: 3s
+      retries: 3
+
+  cv-service:
+    build:
+      context: .
+      dockerfile: apps/cv-service/Dockerfile
+    ports:
+      - "8001:8001"
+    environment:
+      - ENVIRONMENT=development
+      - LOG_LEVEL=info
+    networks:
+      - tls-network
+
+  device-io:
+    build:
+      context: .
+      dockerfile: apps/device-io/Dockerfile
+    ports:
+      - "8002:8002"
+    environment:
+      - ENVIRONMENT=development
+      - LOG_LEVEL=info
+    networks:
+      - tls-network
+    privileged: true  # For hardware device access
+
+networks:
+  tls-network:
+    driver: bridge
+
+volumes:
+  postgres-data:
+  redis-data:
