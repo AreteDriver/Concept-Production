@@ -17,7 +17,7 @@ This is an AI-driven QA/Lean system for Toyota Production methodologies. The pro
 - **Data Processing:** Pandas
 - **Optimization:** OR-Tools (Google's optimization library)
 - **AI Integration:** OpenAI API
-- **Additional:** Protobuf (version <5 for compatibility)
+- **Additional:** Protobuf (version <5 for compatibility with OR-Tools)
 
 ## Project Structure
 ```
@@ -81,9 +81,15 @@ The application will start on `http://localhost:8501` by default.
 - Include TODO comments for planned improvements
 
 ## AI/OpenAI Integration Notes
-- When working with OpenAI API calls, handle rate limits and errors gracefully
-- Store API keys in environment variables, never in code
-- Consider cost implications of API calls in production
+- When working with OpenAI API calls, handle rate limits and errors gracefully:
+  - Implement exponential backoff for rate limit errors (429 status)
+  - Catch and handle `openai.error.RateLimitError` and `openai.error.APIError`
+  - Use try-except blocks with appropriate error messages for users
+- Store API keys in environment variables, never in code (use `os.getenv('OPENAI_API_KEY')`)
+- Consider cost implications of API calls in production:
+  - Cache responses where possible
+  - Set reasonable token limits
+  - Monitor usage with OpenAI's dashboard
 
 ## Streamlit Best Practices
 - Use `st.cache_data` for expensive computations or data loading
