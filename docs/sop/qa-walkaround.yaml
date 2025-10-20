@@ -1,0 +1,46 @@
+id: qa-full-walkaround
+type: inspect
+description: "Complete quality assurance walkaround inspection"
+sequence_order: 100
+requires:
+  tools:
+    - tablet_qa
+    - flashlight
+    - measuring_tape
+  certifications:
+    - qa_certified
+    - visual_inspection_certified
+inputs:
+  photo_required: true
+  cv_required: true
+  checklist:
+    exterior:
+      - Paint condition (no scratches/swirls)
+      - Panel gaps within tolerance
+      - All decals present and aligned
+      - Lighting functional (headlights, taillights, signals)
+      - Tire condition and pressure
+      - Wheel torque verified
+    interior:
+      - Seats and trim condition
+      - Dashboard functional
+      - All controls operational
+      - PPO installations complete and secure
+      - No foreign objects/debris
+    under_vehicle:
+      - No fluid leaks
+      - Exhaust secure
+      - Suspension components tight
+outputs:
+  record:
+    - inspector_id
+    - timestamp
+    - photo_uris
+    - defect_ids
+    - overall_rating
+pass_criteria:
+  overall:
+    - Zero critical defects
+    - Less than 2 minor defects
+    - All photos captured
+    - Supervisor sign-off if defects present
