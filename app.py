@@ -62,8 +62,9 @@ def generate_sample_metrics():
 def render_sidebar():
     """Render the sidebar with navigation and status."""
     with st.sidebar:
-        st.image("https://via.placeholder.com/300x100/4CAF50/FFFFFF?text=TPS+2.0", 
-                 use_container_width=True)
+        # Display header with emoji instead of external image
+        st.markdown("## 🏭 TPS 2.0")
+        st.markdown("---")
         
         st.header("📋 Navigation")
         

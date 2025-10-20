@@ -92,10 +92,14 @@ echo -e "  ${GREEN}make test${NC}       - Run tests"
 echo -e "  ${GREEN}make lint${NC}       - Run linters"
 echo -e "  ${GREEN}make help${NC}       - Show all available commands\n"
 
-# Ask if user wants to run the app now
-read -p "Would you like to start the application now? (y/n) " -n 1 -r
-echo
-if [[ $REPLY =~ ^[Yy]$ ]]; then
-    echo -e "\n${GREEN}Starting application...${NC}\n"
-    streamlit run app.py
+# Ask if user wants to run the app now (only in interactive mode)
+if [[ -t 0 ]]; then
+    read -p "Would you like to start the application now? (y/n) " -n 1 -r
+    echo
+    if [[ $REPLY =~ ^[Yy]$ ]]; then
+        echo -e "\n${GREEN}Starting application...${NC}\n"
+        streamlit run app.py
+    fi
+else
+    echo -e "${YELLOW}Non-interactive mode detected, skipping application start${NC}"
 fi
