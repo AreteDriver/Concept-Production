@@ -3,3 +3,5 @@ pandas
 protobuf<5
 ortools
 openai
+requests
+flask
