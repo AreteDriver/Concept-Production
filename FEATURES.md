@@ -271,7 +271,7 @@ Monitor and analyze market trading activity.
 ## Known Limitations
 
 1. Character data requires valid OAuth tokens for full functionality
-2. 2D map uses simplified positioning (can be enhanced with coordinate data)
-3. Jump route calculation is approximated without full system database
+2. 2D map uses simplified positioning (can be enhanced with actual system coordinate data from SDE)
+3. Jump route calculation is approximated (requires full system coordinate database for accurate distance calculations between systems)
 4. Market analysis is rule-based (ML enhancements planned)
-5. Real-time updates require page refresh (websocket support planned)
+5. Automatic updates require page refresh (websocket support for live updates planned)
