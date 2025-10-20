@@ -1,0 +1,32 @@
+version: '3.8'
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: tls-concept-app
+    ports:
+      - "8501:8501"
+    environment:
+      - OPENAI_API_KEY=${OPENAI_API_KEY:-}
+      - LOG_LEVEL=${LOG_LEVEL:-INFO}
+      - APP_ENV=${APP_ENV:-production}
+      - ENABLE_AI_GUIDANCE=${ENABLE_AI_GUIDANCE:-false}
+      - ENABLE_METRICS_DASHBOARD=${ENABLE_METRICS_DASHBOARD:-true}
+    volumes:
+      - ./data:/app/data
+      - ./logs:/app/logs
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8501/_stcore/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    networks:
+      - tls-network
+
+networks:
+  tls-network:
+    driver: bridge
