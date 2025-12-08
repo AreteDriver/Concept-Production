@@ -85,8 +85,8 @@ proper sequencing and safety.
 ### Hardware platform
 - **Microsoft HoloLens 2** – Enterprise-ready mixed reality headset with spatial anchoring, voice 
   commands, and gesture controls. Provides hands-free operation critical for production environments.
-- **Specifications**: 2K resolution per eye, built-in WiFi 6, 4+ hour battery life, industry-grade 
-  durability suitable for manufacturing environments.
+- **Specifications**: 2048x1080 resolution per eye (approx. 2.5K), built-in Wi-Fi 5 (802.11ac), 
+  4+ hour battery life, industry-grade durability suitable for manufacturing environments.
 
 ### Software architecture
 ```

@@ -474,7 +474,7 @@ def render_ar_hud_concepts() -> None:
         - **Performance tracking**: Telemetry captures cycle times and quality metrics for 
           continuous improvement
         
-        📖 See [AI-Assisted Workflows documentation](../docs/ai-assisted-workflows.md) for complete 
+        📖 See [AI-Assisted Workflows documentation](docs/ai-assisted-workflows.md) for complete 
         details on AI integration strategy.
         """
     )
@@ -605,8 +605,8 @@ def render_ar_hud_concepts() -> None:
                 """
                 ### Hardware Platform
                 **Microsoft HoloLens 2**
-                - 2K resolution per eye for clear overlay visibility
-                - Built-in WiFi 6 for real-time data streaming
+                - 2048x1080 resolution per eye (approx. 2.5K) for clear overlay visibility
+                - Built-in Wi-Fi 5 (802.11ac) for real-time data streaming
                 - 4+ hour battery life for full shift coverage
                 - Industry-grade durability for manufacturing environments
                 - Hands-free operation via voice and gestures
