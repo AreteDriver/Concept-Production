@@ -457,15 +457,33 @@ def render_ar_hud_concepts() -> None:
     )
 
     st.info(
-        "The concepts below assume lightweight wearable displays that can anchor callouts directly "
-        "on vehicles, tools, and staging zones. They emphasise glanceable guidance, checklists, and "
-        "quick access to escalation workflows."
+        "The concepts below assume lightweight wearable displays (Microsoft HoloLens 2) that can "
+        "anchor callouts directly on vehicles, tools, and staging zones. They emphasise glanceable "
+        "guidance, checklists, and quick access to escalation workflows, enhanced with real-time AI "
+        "feedback for installation validation and quality assurance."
     )
 
-    flow_tab, ppo_tab, fqa_tab = st.tabs([
+    st.markdown(
+        """
+        ### AI-Enhanced Features
+        - **Real-time guidance**: AI models provide step-by-step installation sequences optimized 
+          for each vehicle configuration
+        - **Visual quality checks**: Computer vision detects misaligned parts, missing components, 
+          and assembly errors automatically
+        - **Predictive alerts**: System warns of common installation pitfalls before they occur
+        - **Performance tracking**: Telemetry captures cycle times and quality metrics for 
+          continuous improvement
+        
+        📖 See [AI-Assisted Workflows documentation](../docs/ai-assisted-workflows.md) for complete 
+        details on AI integration strategy.
+        """
+    )
+
+    flow_tab, ppo_tab, fqa_tab, tech_tab = st.tabs([
         "Flow Driver shuttle",
         "PPO install shop",
         "FQA final assurance",
+        "Technical implementation",
     ])
 
     with flow_tab:
@@ -570,6 +588,143 @@ def render_ar_hud_concepts() -> None:
         st.caption(
             "A short huddle view can summarise defects or missing items detected through the HUD to "
             "tighten the feedback loop with upstream teams."
+        )
+
+    with tech_tab:
+        st.subheader("Technical implementation architecture")
+        st.write(
+            "This section outlines the technical approach for deploying AI-enhanced AR HUD systems "
+            "in production environments, integrating HoloLens 2, FastAPI backend, and containerized "
+            "deployment for scalability."
+        )
+
+        col1, col2 = st.columns(2)
+        
+        with col1:
+            st.markdown(
+                """
+                ### Hardware Platform
+                **Microsoft HoloLens 2**
+                - 2K resolution per eye for clear overlay visibility
+                - Built-in WiFi 6 for real-time data streaming
+                - 4+ hour battery life for full shift coverage
+                - Industry-grade durability for manufacturing environments
+                - Hands-free operation via voice and gestures
+                - Spatial anchoring for precise vehicle-relative overlays
+                
+                ### Software Stack
+                **Frontend (AR Client)**
+                - HoloLens 2 native application
+                - Spatial mapping and object recognition
+                - Voice command processing
+                - Gesture controls for interaction
+                
+                **Backend (FastAPI/Python)**
+                - REST API for AR client communication
+                - Real-time AI guidance engine
+                - Visual quality inspection models
+                - Telemetry and analytics pipeline
+                - Integration with vehicle build systems
+                """
+            )
+        
+        with col2:
+            st.markdown(
+                """
+                ### AI Capabilities
+                **Real-time Installation Guidance**
+                - Step-by-step sequences optimized per vehicle variant
+                - Dynamic torque specifications and tool settings
+                - Predictive alerts for common installation errors
+                
+                **Visual Quality Inspection**
+                - Automated part verification and alignment checks
+                - Surface quality and defect detection
+                - Completeness validation for installation steps
+                - Real-time feedback to prevent rework
+                
+                **Performance Analytics**
+                - Cycle time tracking and takt comparison
+                - First-time-through rate monitoring
+                - Skill development and coaching insights
+                - Waste pattern identification
+                
+                ### Deployment Infrastructure
+                **Docker Containerization**
+                - Microservices architecture for scalability
+                - Version control and rollback capabilities
+                - Cloud or on-premises deployment options
+                - Automated CI/CD pipeline integration
+                """
+            )
+
+        st.markdown("---")
+        
+        st.subheader("System integration overview")
+        st.code(
+            """
+Architecture:
+┌─────────────────────┐
+│  HoloLens 2 Client  │ ← AR overlays, voice, gestures, spatial anchoring
+└──────────┬──────────┘
+           │ REST API (HTTPS/WebSocket)
+           ▼
+┌─────────────────────┐
+│  FastAPI Backend    │ ← AI models, business logic, real-time guidance
+│  (Containerized)    │
+└──────────┬──────────┘
+           │
+           ▼
+┌─────────────────────┐
+│  Data Layer         │ ← Vehicle specs, quality metrics, telemetry
+│  + TLS Dashboard    │   Integration with existing Streamlit dashboard
+└─────────────────────┘
+
+Data Flow:
+1. AR client requests installation guidance for VIN
+2. Backend retrieves vehicle configuration and generates AI-optimized sequence
+3. Visual overlays and voice prompts guide associate through steps
+4. Computer vision validates each step in real-time
+5. Telemetry feeds back to TLS dashboard for takt/waste/kaizen tracking
+            """,
+            language="text"
+        )
+
+        st.subheader("Integration with TLS dashboard")
+        integration_data = pd.DataFrame([
+            {
+                "TLS Module": "Takt Time Planner",
+                "AR Data Integration": "Real-time cycle time updates from AR-tracked installations",
+                "Benefit": "Accurate capacity planning with live production data"
+            },
+            {
+                "TLS Module": "Waste Observation Log",
+                "AR Data Integration": "Automated waste detection (motion, waiting, defects) from AR sensors",
+                "Benefit": "Continuous gemba observations without manual logging"
+            },
+            {
+                "TLS Module": "Kaizen Planner",
+                "AR Data Integration": "AI-generated improvement suggestions from installation pattern analysis",
+                "Benefit": "Data-driven kaizen ideas with quantified impact"
+            },
+            {
+                "TLS Module": "AR HUD Concepts",
+                "AR Data Integration": "Usage metrics, adoption rates, and effectiveness scores",
+                "Benefit": "Evidence-based iteration on AR experience design"
+            },
+        ])
+        st.dataframe(integration_data, use_container_width=True)
+
+        st.info(
+            "📖 For complete AI integration strategy, deployment roadmap, and success metrics, "
+            "see [docs/ai-assisted-workflows.md](https://github.com/AreteDriver/TLS-Concept-production-2.0/blob/main/docs/ai-assisted-workflows.md) "
+            "and [docs/ui-ux/ar-hud-concepts.md](https://github.com/AreteDriver/TLS-Concept-production-2.0/blob/main/docs/ui-ux/ar-hud-concepts.md)"
+        )
+
+        st.caption(
+            "This technical implementation builds upon research from AI/AR installation optimization "
+            "initiatives, combining HoloLens visualization, real-time AI feedback, and Lean "
+            "manufacturing principles for streamlined automotive production."
         )
 
 
