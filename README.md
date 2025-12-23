@@ -50,3 +50,19 @@ Use it as a reference when extending the dashboard or collaborating with designe
 Feel free to fork this repository and adapt the calculators, data models, or styling to suit your
 team's workflows. Contributions that add additional documentation artefacts (wireframes, research
 insights, deployment runbooks) are welcome.
+
+## AI_AR_Install_Optimization Integration
+
+This repository now includes the [AI_AR_Install_Optimization](AI_AR_Install_Optimization/) project,
+which explores the integration of Artificial Intelligence, Augmented Reality, and Lean manufacturing
+principles for automotive installation and quality assurance processes.
+
+The AI_AR_Install_Optimization module provides:
+- FastAPI backend for AI-powered installation guidance
+- AR-assisted workflows designed for Microsoft HoloLens 2
+- Dockerized deployment for scalability
+- Standardized installation guidance models using visual AI
+
+For more information, see:
+- [AI_AR_Install_Optimization README](AI_AR_Install_Optimization/README.md)
+- [Merge Information](AI_AR_Install_Optimization/MERGE_INFO.md)
