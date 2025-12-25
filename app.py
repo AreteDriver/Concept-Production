@@ -1,4 +1,4 @@
-"""Streamlit app illustrating the TLS facility production concept."""
+"""Streamlit app illustrating the Client facility production concept."""
 
 from __future__ import annotations
 
@@ -11,24 +11,24 @@ import streamlit as st
 
 
 @dataclass(frozen=True)
-class TLSWasteCategory:
-    """Represents a TLS waste focus area used across the facility."""
+class ClientWasteCategory:
+    """Represents a Client waste focus area used across the facility."""
 
     name: str
     description: str
 
 
-TLS_WASTES: List[TLSWasteCategory] = [
-    TLSWasteCategory("Transportation", "Unnecessary movement of materials or products."),
-    TLSWasteCategory("Inventory", "Excess stock that ties up cash and space."),
-    TLSWasteCategory("Motion", "Unnecessary associate movement."),
-    TLSWasteCategory("Waiting", "Idle time caused by imbalanced processes."),
-    TLSWasteCategory("Overproduction", "Making more than is needed or too early."),
-    TLSWasteCategory(
+CLIENT_WASTES: List[ClientWasteCategory] = [
+    ClientWasteCategory("Transportation", "Unnecessary movement of materials or products."),
+    ClientWasteCategory("Inventory", "Excess stock that ties up cash and space."),
+    ClientWasteCategory("Motion", "Unnecessary associate movement."),
+    ClientWasteCategory("Waiting", "Idle time caused by imbalanced processes."),
+    ClientWasteCategory("Overproduction", "Making more than is needed or too early."),
+    ClientWasteCategory(
         "Overprocessing",
-        "Doing more work or using more components than required for the TLS build list.",
+        "Doing more work or using more components than required for the Client build list.",
     ),
-    TLSWasteCategory("Defects", "Rework or scrap due to quality issues."),
+    ClientWasteCategory("Defects", "Rework or scrap due to quality issues."),
 ]
 
 
@@ -46,19 +46,19 @@ def init_session_state() -> None:
 
 
 def render_overview() -> None:
-    """Display background information about the TLS concept."""
+    """Display background information about the Client concept."""
 
-    st.title("TLS Concept Production 2.0")
-    st.subheader("TLS facility roadmap for continuous improvement")
+    st.title("Client Concept Production 2.0")
+    st.subheader("Client facility roadmap for continuous improvement")
     st.write(
-        "This dashboard captures core concepts from the TLS facility playbook and helps "
+        "This dashboard captures core concepts from the Client facility playbook and helps "
         "teams quickly explore their production health. Use it to calculate takt time, "
         "visualise waste hotspots, and prioritise improvement experiments."
     )
 
     st.markdown(
         """
-        ### TLS guiding principles
+        ### Client guiding principles
         * **Customer first** – Align production cadence with real demand.
         * **Eliminate waste** – Continuously surface and remove activities that do not add value.
         * **Respect for people** – Empower frontline teams to expose problems and solve them.
@@ -67,7 +67,7 @@ def render_overview() -> None:
     )
 
     st.info(
-        "Switch between the calculators in the sidebar to explore how each TLS element "
+        "Switch between the calculators in the sidebar to explore how each Client element "
         "supports flow, quality, and stability."
     )
 
@@ -232,14 +232,14 @@ def render_waste_tracker() -> None:
         "to uncover hotspots by area, team, or shift."
     )
 
-    with st.expander("Quick reference: TLS waste focus areas"):
-        for waste in TLS_WASTES:
+    with st.expander("Quick reference: Client waste focus areas"):
+        for waste in CLIENT_WASTES:
             st.markdown(f"**{waste.name}** — {waste.description}")
 
     with st.form("waste_form"):
         col1, col2 = st.columns(2)
         with col1:
-            category = st.selectbox("Waste category", [w.name for w in TLS_WASTES])
+            category = st.selectbox("Waste category", [w.name for w in CLIENT_WASTES])
             count = st.number_input("Occurrences", min_value=1, value=1)
             observed_on = st.date_input(
                 "Observation date",
@@ -451,7 +451,7 @@ def render_ar_hud_concepts() -> None:
 
     st.header("AR HUD Concepts")
     st.write(
-        "Blueprint overlays for the TLS augmented reality programme. Each HUD is tuned to the "
+        "Blueprint overlays for the Client augmented reality programme. Each HUD is tuned to the "
         "workflow, safety posture, and quality checks required in specific areas across the "
         "facility. Use these references when briefing artists or prototyping heads-up displays."
     )
@@ -585,10 +585,10 @@ PAGE_RENDERERS = {
 def main() -> None:
     """Application entry point."""
 
-    st.set_page_config(page_title="TLS Concept Production 2.0", layout="wide")
+    st.set_page_config(page_title="Client Concept Production 2.0", layout="wide")
     init_session_state()
 
-    st.sidebar.title("TLS navigation")
+    st.sidebar.title("Client navigation")
     selection = st.sidebar.radio("Select module", list(PAGE_RENDERERS.keys()))
 
     PAGE_RENDERERS[selection]()

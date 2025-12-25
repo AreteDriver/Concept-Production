@@ -1,8 +1,8 @@
-# TLS AR HUD Concept Art Brief
+# Client AR HUD Concept Art Brief
 
 ## Purpose
 Provide art direction and interaction notes for augmented reality heads-up displays that support
-TLS facility teams. Each concept covers the workflows, safety requirements, and validation steps
+Client facility teams. Each concept covers the workflows, safety requirements, and validation steps
 for Flow Driver shuttles, the PPO install shop, and FQA final assurance.
 
 ## Experience principles
