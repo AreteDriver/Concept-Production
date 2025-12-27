@@ -4,6 +4,10 @@ might explore flow, waste, and improvement ideas in one place. The refreshed das
 running history of every calculation or observation so data can be revisited during daily huddles
 or leadership reviews.
 
+This initiative integrates learnings from AI/AR installation optimization research to envision a 
+future where real-time AI guidance, HoloLens visualization, and Lean manufacturing principles work 
+together to streamline automotive production processes.
+
 The app bundles four lightweight tools:
 
 - **Takt time planner** – Capture named scenarios, compare takt time versus cycle time, and review
@@ -13,7 +17,8 @@ The app bundles four lightweight tools:
 - **Kaizen planner** – Build an improvement backlog with due dates, status tracking, and leverage
   scoring cues to highlight quick wins.
 - **AR HUD concepts** – Explore heads-up display overlays for Flow Driver shuttles, PPO installs,
-  and FQA final assurance to brief experience designers.
+  and FQA final assurance to brief experience designers. Now enhanced with technical implementation 
+  details including HoloLens 2 integration, FastAPI backend architecture, and AI-assisted workflows.
 
 Use the dashboard as a starting point for discussions about your own production system and as a
 sandbox for future Client experiments.
@@ -45,7 +50,10 @@ Use it as a reference when extending the dashboard or collaborating with designe
 - [`docs/ui-ux/dashboard-design.md`](docs/ui-ux/dashboard-design.md) – Personas, information
   architecture, and layout decisions.
 - [`docs/ui-ux/ar-hud-concepts.md`](docs/ui-ux/ar-hud-concepts.md) – Concept art brief for AR heads-
-  up displays tailored to each facility workflow.
+  up displays tailored to each facility workflow, now including technical implementation with 
+  HoloLens 2, FastAPI backend, and Docker deployment.
+- [`docs/ai-assisted-workflows.md`](docs/ai-assisted-workflows.md) – AI integration strategy for 
+  real-time guidance, visual quality inspection, predictive analytics, and automated waste detection.
 
 Feel free to fork this repository and adapt the calculators, data models, or styling to suit your
 team's workflows. Contributions that add additional documentation artefacts (wireframes, research
