@@ -1,7 +1,7 @@
-# TLS Concept Roadmap
+# Client Concept Roadmap
 
 ## Purpose
-This roadmap outlines high-value improvements to pursue in upcoming iterations of the TLS concept dashboard so every commit builds toward a production-ready pilot.
+This roadmap outlines high-value improvements to pursue in upcoming iterations of the Client concept dashboard so every commit builds toward a production-ready pilot.
 
 ## 1. Data and persistence
 - Introduce a lightweight database (e.g., SQLite via SQLAlchemy) so takt, waste, and kaizen histories persist between sessions.

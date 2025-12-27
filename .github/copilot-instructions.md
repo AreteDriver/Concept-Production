@@ -1,4 +1,4 @@
-# Copilot instructions for TLS-Concept-production-2.0
+# Copilot instructions for Client-Concept-production-2.0
 
 Provide Copilot with concise, accurate, repository-specific context so it can generate code and suggestions that follow project conventions and domain constraints. Do not include unrelated project examples or external product plans.
 

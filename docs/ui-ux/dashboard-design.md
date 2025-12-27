@@ -1,4 +1,4 @@
-# TLS Concept Dashboard – UI & UX Design Blueprint
+# Client Concept Dashboard – UI & UX Design Blueprint
 
 ## Purpose and guiding goals
 - Provide production leaders with a single screen to understand flow health, waste hotspots, and improvement work-in-progress.

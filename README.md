@@ -1,5 +1,5 @@
 ## Overview
-This repository contains a Streamlit prototype that demonstrates how the TLS facility concept team
+This repository contains a Streamlit prototype that demonstrates how the Client facility concept team
 might explore flow, waste, and improvement ideas in one place. The refreshed dashboard keeps a
 running history of every calculation or observation so data can be revisited during daily huddles
 or leadership reviews.
@@ -21,7 +21,7 @@ The app bundles four lightweight tools:
   details including HoloLens 2 integration, FastAPI backend architecture, and AI-assisted workflows.
 
 Use the dashboard as a starting point for discussions about your own production system and as a
-sandbox for future TLS experiments.
+sandbox for future Client experiments.
 
 ### Plan the next iteration
 
@@ -39,7 +39,7 @@ on what to push to the repository next.
    ```bash
    streamlit run app.py
    ```
-3. Open the URL printed in the terminal (typically http://localhost:8501) to explore the TLS
+3. Open the URL printed in the terminal (typically http://localhost:8501) to explore the Client
    concept modules.
 
 ### Explore the design blueprint
@@ -47,7 +47,7 @@ on what to push to the repository next.
 The `docs/` directory contains the UI/UX architecture that guides the Streamlit implementation.
 Use it as a reference when extending the dashboard or collaborating with designers:
 
-- [`docs/ui-ux/tls-dashboard-design.md`](docs/ui-ux/tls-dashboard-design.md) – Personas, information
+- [`docs/ui-ux/dashboard-design.md`](docs/ui-ux/dashboard-design.md) – Personas, information
   architecture, and layout decisions.
 - [`docs/ui-ux/ar-hud-concepts.md`](docs/ui-ux/ar-hud-concepts.md) – Concept art brief for AR heads-
   up displays tailored to each facility workflow, now including technical implementation with 
